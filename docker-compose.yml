@@ -1,0 +1,90 @@
+version: "3.9"
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: fusot-mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: facility_utilization
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306"
+    volumes:
+      - fusot_mysql_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+
+  backend:
+    build: .
+    container_name: fusot-backend
+    restart: always
+    depends_on:
+      - mysql
+    environment:
+
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/facility_utilization?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+
+      # JWT secret (change in real deployment)
+      APP_JWT_SECRET: FUSOT_SUPER_SECRET_KEY_2026_04_15!!!
+
+      # Optional: if you use mail
+      MAIL_HOST: smtp.gmail.com
+      MAIL_PORT: 587
+      MAIL_USERNAME: santhoshraman055@gmail.com
+      MAIL_PASSWORD: uwhyyaediyuladxu
+
+    ports:
+      - "8080:8080"
+  
+volumes:
+  fusot_mysql_data:
+
+# version: "3.9"
+
+# services:
+#   mysql:
+#     image: mysql:8.0
+#     container_name: fusot-mysql
+#     restart: always
+#     environment:
+#       MYSQL_DATABASE: facility_utilization
+#       MYSQL_ROOT_PASSWORD: root
+#     ports:
+#       - "3307:3306"
+#     volumes:
+#       - fusot_mysql_data:/var/lib/mysql
+#     command: --default-authentication-plugin=mysql_native_password
+
+#   backend:
+#     build:
+#       context: ./FUSOT_Project-1
+#       dockerfile: Dockerfile
+#     container_name: fusot-backend
+#     restart: always
+#     depends_on:
+#       - mysql
+#     environment:
+#       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/facility_utilization?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+#       SPRING_DATASOURCE_USERNAME: root
+#       SPRING_DATASOURCE_PASSWORD: root
+#       APP_JWT_SECRET: FUSOT_SUPER_SECRET_KEY_2026_04_15__CHANGE_ME_123456
+#     ports:
+#       - "8080:8080"
+
+#   frontend:
+#     build:
+#       context: ./frontend
+#       dockerfile: Dockerfile
+#       args:
+#         VITE_API_BASE_URL: http://localhost:8080
+#     container_name: fusot-frontend
+#     restart: always
+#     depends_on:
+#       - backend
+#     ports:
+#       - "5173:80"
+
+# volumes:
+#   fusot_mysql_data:
